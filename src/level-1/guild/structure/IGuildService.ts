@@ -107,8 +107,16 @@ export namespace IGuildService {
 
     /**
      * Verification level required for the guild.
+     *
+     * - 0(NONE): unrestricted
+     * - 1(LOW): must have verified email on account
+     * - 2(MEDIUM): must be registered on Discord for longer than 5 minutes
+     * - 3(HIGH): must be a member of the server for longer than 10 minutes
+     * - 4(VERY_HIGH): must have a verified phone number
+     *
+     * @link https://discord.com/developers/docs/resources/guild#guild-object-verification-level
      */
-    verification_level: number;
+    verification_level: 0 | 1 | 2 | 3 | 4;
 
     /**
      * List of roles in the guild.
@@ -117,18 +125,34 @@ export namespace IGuildService {
 
     /**
      * Default notification level for the guild.
+     *
+     * - 0(ALL_MESSAGES): members will receive notifications for all messages by default
+     * - 1(ONLY_MENTIONS): members will receive notifications only for messages that `@mention` them by default
+     *
+     * @link https://discord.com/developers/docs/resources/guild#guild-object-default-message-notification-level
      */
-    default_message_notifications: number;
+    default_message_notifications: 0 | 1;
 
     /**
      * Multi-factor authentication level for the guild.
+     *
+     * - 0(NONE): guild has no MFA/2FA requirement for moderation actions
+     * - 1(ELEVATED): guild has a 2FA requirement for moderation actions
+     *
+     * @link https://discord.com/developers/docs/resources/guild#guild-object-mfa-level
      */
-    mfa_level: number;
+    mfa_level: 0 | 1;
 
     /**
      * Explicit content filter level.
+     *
+     * - 0(DISABLED): media content will not be scanned
+     * - 1(MEMBERS_WITHOUT_ROLES): media content sent by members without roles will be scanned
+     * - 2(ALL_MEMBERS): media content sent by all members will be scanned
+     *
+     * @link https://discord.com/developers/docs/resources/guild#guild-object-explicit-content-filter-level
      */
-    explicit_content_filter: number;
+    explicit_content_filter: 0 | 1 | 2;
 
     /**
      * Maximum number of presences (if set).
@@ -231,5 +255,43 @@ export namespace IGuildService {
      * @default false
      */
     with_counts?: boolean;
+  }
+
+  export interface IUpdateGuildInput
+    extends Partial<{
+      name: string;
+      region?: string;
+      verification_level?: number;
+      default_message_notifications?: number;
+      explicit_content_filter?: number;
+      afk_channel_id?: string;
+      afk_timeout?: number;
+      icon?: string; // base64 encoded image data (png/jpeg/gif)
+      owner_id?: string;
+      splash?: string; // base64 encoded image data
+      discovery_splash?: string; // base64 encoded image data
+      banner?: string; // base64 encoded image data
+      system_channel_id?: string;
+      system_channel_flags?: number;
+      rules_channel_id?: string;
+      public_updates_channel_id?: string;
+      preferred_locale?: string;
+      features?: string[];
+      description?: string;
+      premium_progress_bar_enabled?: boolean;
+      safety_alerts_channel_id?: string;
+    }> {
+    /**
+     * Optional reason to include in the Discord audit log.
+     *
+     * This value will be sent as the `X-Audit-Log-Reason` header.
+     * It allows moderators and administrators to see why a particular
+     * action was performed, such as renaming a guild or banning a user.
+     *
+     * Note:
+     * - Must be URL-encoded (handled automatically by most HTTP clients).
+     * - Only visible in the server's audit log if the bot has sufficient permissions.
+     */
+    auditLogReason?: string;
   }
 }

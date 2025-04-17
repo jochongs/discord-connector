@@ -25,15 +25,45 @@ export class GuildService {
     input: IGuildService.IGetGuildInput,
   ): Promise<IGuildService.IGuild> {
     const { with_counts = false } = input;
-    const url = `https://discord.com/api/v10/guilds/${this.GUILD_ID}`;
-    const response = await this.axios.get(url, {
-      headers: {
-        Authorization: `Bot ${this.BOT_TOKEN}`,
+
+    const response = await this.axios.get(
+      `https://discord.com/api/v10/guilds/${this.GUILD_ID}`,
+      {
+        headers: {
+          Authorization: `Bot ${this.BOT_TOKEN}`,
+        },
+        params: {
+          with_counts,
+        },
       },
-      params: {
-        with_counts,
+    );
+
+    return response.data;
+  }
+
+  /**
+   * Modify a guild's settings.
+   * Requires the MANAGE_GUILD permission.
+   * Returns the updated guild object on success.
+   * Fires a Guild Update Gateway event.
+   *
+   * @link https://discord.com/developers/docs/resources/guild#modify-guild
+   */
+  public async updateGuildById(
+    input: IGuildService.IUpdateGuildInput,
+  ): Promise<IGuildService.IGuild> {
+    const response = await this.axios.patch(
+      `https://discord.com/api/v10/guilds/${this.GUILD_ID}`,
+      input,
+      {
+        headers: {
+          Authorization: `Bot ${this.BOT_TOKEN}`,
+          "X-Audit-Log-Reason": input.auditLogReason
+            ? input.auditLogReason
+            : undefined,
+        },
       },
-    });
+    );
 
     return response.data;
   }

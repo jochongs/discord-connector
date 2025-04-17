@@ -14,7 +14,7 @@ async function main() {
     GUILD_ID as string,
   );
 
-  console.log(await guildService.getGuildById({}));
+  console.log();
 }
 
 main();
