@@ -176,8 +176,15 @@ export namespace IGuildService {
 
     /**
      * The server's Nitro boost level.
+     *
+     * - 0(NONE): guild has not unlocked any Server Boost perks
+     * - 1(TIER_1): guild has unlocked Server Boost level 1 perks
+     * - 2(TIER_2): guild has unlocked Server Boost level 2 perks
+     * - 3(TIER_3): guild has unlocked Server Boost level 3 perks
+     *
+     * @link https://discord.com/developers/docs/resources/guild#guild-object-premium-tier
      */
-    premium_tier: number;
+    premium_tier: 0 | 1 | 2 | 3;
 
     /**
      * Number of users who boosted the guild.
@@ -185,7 +192,19 @@ export namespace IGuildService {
     premium_subscription_count?: number;
 
     /**
-     * System channel flags (bitwise).
+     * System channel settings configured with bitwise flags.
+     *
+     * These flags control which system messages are suppressed in the server's system channel.
+     * Multiple flags may be combined using bitwise OR.
+     *
+     * - 1 << 0 (1): SUPPRESS_JOIN_NOTIFICATIONS — suppress member join messages
+     * - 1 << 1 (2): SUPPRESS_PREMIUM_SUBSCRIPTIONS — suppress Nitro boost messages
+     * - 1 << 2 (4): SUPPRESS_GUILD_REMINDER_NOTIFICATIONS — suppress server setup tips
+     * - 1 << 3 (8): SUPPRESS_JOIN_NOTIFICATION_REPLIES — hide join sticker reply buttons
+     * - 1 << 4 (16): SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS — suppress role subscription messages
+     * - 1 << 5 (32): SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES — hide role subscription sticker replies
+     *
+     * @link https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags
      */
     system_channel_flags: number;
 
@@ -258,29 +277,31 @@ export namespace IGuildService {
   }
 
   export interface IUpdateGuildInput
-    extends Partial<{
-      name: string;
-      region?: string;
-      verification_level?: number;
-      default_message_notifications?: number;
-      explicit_content_filter?: number;
-      afk_channel_id?: string;
-      afk_timeout?: number;
-      icon?: string; // base64 encoded image data (png/jpeg/gif)
-      owner_id?: string;
-      splash?: string; // base64 encoded image data
-      discovery_splash?: string; // base64 encoded image data
-      banner?: string; // base64 encoded image data
-      system_channel_id?: string;
-      system_channel_flags?: number;
-      rules_channel_id?: string;
-      public_updates_channel_id?: string;
-      preferred_locale?: string;
-      features?: string[];
-      description?: string;
-      premium_progress_bar_enabled?: boolean;
-      safety_alerts_channel_id?: string;
-    }> {
+    extends Partial<
+      Pick<
+        IGuild,
+        | "name"
+        | "region"
+        | "verification_level"
+        | "default_message_notifications"
+        | "explicit_content_filter"
+        | "afk_channel_id"
+        | "afk_timeout"
+        | "icon"
+        | "owner_id"
+        | "splash"
+        | "discovery_splash"
+        | "banner"
+        | "system_channel_id"
+        | "system_channel_flags"
+        | "rules_channel_id"
+        | "public_updates_channel_id"
+        | "preferred_locale"
+        | "features"
+        | "description"
+        | "safety_alerts_channel_id"
+      >
+    > {
     /**
      * Optional reason to include in the Discord audit log.
      *
@@ -293,5 +314,10 @@ export namespace IGuildService {
      * - Only visible in the server's audit log if the bot has sufficient permissions.
      */
     auditLogReason?: string;
+
+    /**
+     * whether the guild's boost progress bar should be enabled
+     */
+    premium_progress_bar_enabled?: boolean;
   }
 }
