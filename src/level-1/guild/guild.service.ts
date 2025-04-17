@@ -1,6 +1,5 @@
 import { Axios } from "axios";
 import { IGuildService } from "./structure/IGuildService";
-import typia from "typia";
 
 /**
  * Guilds in Discord represent an isolated collection of users and channels,
