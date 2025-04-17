@@ -1,0 +1,3 @@
+# Discord Connector
+
+for agentica
