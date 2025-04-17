@@ -1,13 +1,17 @@
 {
+  "name": "discord-connector",  
+  "author": "jochongs",
+  "scripts": {
+    "start" : "tsx",
+    "prepare": "ts-patch install"
+  },
   "devDependencies": {
+    "@types/node": "^22.14.1",
     "ts-patch": "^3.3.0",
     "typescript": "~5.8.3"
   },
   "dependencies": {
     "axios": "^1.8.4",
     "typia": "^9.1.1"
-  },
-  "scripts": {
-    "prepare": "ts-patch install"
-  }
+  }  
 }
