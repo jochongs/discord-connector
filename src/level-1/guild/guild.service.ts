@@ -36,9 +36,6 @@ export class GuildService {
       },
     });
 
-    const result = typia.validate<IGuildService.IGuild>(response.data);
-    console.log(result);
-
     return response.data;
   }
 }
