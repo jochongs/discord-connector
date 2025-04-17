@@ -2,6 +2,37 @@ import { tags } from "typia";
 import { ICommon } from "../../common/structure/ICommon";
 
 export namespace IGuildService {
+  type GuildFeature =
+    | "ANIMATED_BANNER"
+    | "ANIMATED_ICON"
+    | "APPLICATION_COMMAND_PERMISSIONS_V2"
+    | "AUTO_MODERATION"
+    | "BANNER"
+    | "COMMUNITY"
+    | "CREATOR_MONETIZABLE_PROVISIONAL"
+    | "CREATOR_STORE_PAGE"
+    | "DEVELOPER_SUPPORT_SERVER"
+    | "DISCOVERABLE"
+    | "FEATURABLE"
+    | "INVITES_DISABLED"
+    | "INVITE_SPLASH"
+    | "MEMBER_VERIFICATION_GATE_ENABLED"
+    | "MORE_SOUNDBOARD"
+    | "MORE_STICKERS"
+    | "NEWS"
+    | "PARTNERED"
+    | "PREVIEW_ENABLED"
+    | "RAID_ALERTS_DISABLED"
+    | "ROLE_ICONS"
+    | "ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE"
+    | "ROLE_SUBSCRIPTIONS_ENABLED"
+    | "SOUNDBOARD"
+    | "TICKETED_EVENTS_ENABLED"
+    | "VANITY_URL"
+    | "VERIFIED"
+    | "VIP_REGIONS"
+    | "WELCOME_SCREEN_ENABLED";
+
   /**
    * @link https://discord.com/developers/docs/resources/guild#guild-resource
    *
@@ -20,50 +51,34 @@ export namespace IGuildService {
      */
     name: string & tags.MinLength<2> & tags.MaxLength<100>;
 
-    icon?: ICommon.IIcon["hash"] | null;
+    /**
+     * icon hash
+     */
+    icon: ICommon.IIcon["hash"] | null;
 
     /**
-     * The description of the guild (null if not set).
+     * icon hash, returned when in the template object
      */
-    description?: string | null;
+    icon_hash?: ICommon.IIcon["hash"] | null;
 
     /**
      * The guild's splash image hash.
-     * See: https://cdn.discordapp.com/splashes/{guild_id}/{splash}.{format}?size={size}
+     * https://cdn.discordapp.com/splashes/{guild_id}/{splash}.{format}?size={size}
      */
-    splash?: ICommon.ISplash["hash"] | null;
+    splash: ICommon.ISplash["hash"] | null;
 
     /**
      * The discovery splash image hash used on discovery pages.
-     * See: https://cdn.discordapp.com/discovery-splashes/{guild_id}/{discovery_splash}.{format}?size={size}
+     * https://cdn.discordapp.com/discovery-splashes/{guild_id}/{discovery_splash}.{format}?size={size}
      */
     discovery_splash?: ICommon.ISplash["hash"] | null;
 
     /**
-     * Approximate number of members in the guild (when with_counts is true).
+     * true if the user is the owner of the guild
+     *
+     * ! (*)This field is only available when using OAuth2 with specific scopes.
      */
-    approximate_member_count?: number;
-
-    /**
-     * Approximate number of online members in the guild (when with_counts is true).
-     */
-    approximate_presence_count?: number;
-
-    /**
-     * Enabled guild features (e.g., "COMMUNITY", "NEWS").
-     */
-    features: string[];
-
-    /**
-     * Array of emojis defined in the guild.
-     */
-    emojis: IGuildEmoji[];
-
-    /**
-     * The guild's banner image hash.
-     * See: https://cdn.discordapp.com/banners/{guild_id}/{banner}.{format}?size={size}
-     */
-    banner?: ICommon.IBanner["hash"] | null;
+    owner: never;
 
     /**
      * The user ID of the guild owner.
@@ -71,14 +86,18 @@ export namespace IGuildService {
     owner_id: string;
 
     /**
-     * The application ID of the guild creator, if bot-created.
+     * total permissions for the user in the guild (excludes overwrites and implicit permissions)
+     *
+     * ! (*)This field is only available when using OAuth2 with specific scopes.
      */
-    application_id?: string | null;
+    permissions: never;
 
     /**
      * @deprecated Region is deprecated and no longer used.
+     *
+     * ! (**) requires elevated permissions or privileged intents to be returned.
      */
-    region?: string | null;
+    region: never;
 
     /**
      * The ID of the AFK voice channel.
@@ -91,17 +110,12 @@ export namespace IGuildService {
     afk_timeout: number;
 
     /**
-     * The ID of the system channel (used for join/boost messages).
-     */
-    system_channel_id: string | null;
-
-    /**
-     * Whether the guild widget is enabled.
+     * true if the server widget is enabled
      */
     widget_enabled?: boolean;
 
     /**
-     * The ID of the channel associated with the widget.
+     * the channel id that the widget will generate an invite to, or null if set to no invite
      */
     widget_channel_id?: string | null;
 
@@ -119,11 +133,6 @@ export namespace IGuildService {
     verification_level: 0 | 1 | 2 | 3 | 4;
 
     /**
-     * List of roles in the guild.
-     */
-    roles: ICommon.IRole[];
-
-    /**
      * Default notification level for the guild.
      *
      * - 0(ALL_MESSAGES): members will receive notifications for all messages by default
@@ -132,16 +141,6 @@ export namespace IGuildService {
      * @link https://discord.com/developers/docs/resources/guild#guild-object-default-message-notification-level
      */
     default_message_notifications: 0 | 1;
-
-    /**
-     * Multi-factor authentication level for the guild.
-     *
-     * - 0(NONE): guild has no MFA/2FA requirement for moderation actions
-     * - 1(ELEVATED): guild has a 2FA requirement for moderation actions
-     *
-     * @link https://discord.com/developers/docs/resources/guild#guild-object-mfa-level
-     */
-    mfa_level: 0 | 1;
 
     /**
      * Explicit content filter level.
@@ -155,41 +154,72 @@ export namespace IGuildService {
     explicit_content_filter: 0 | 1 | 2;
 
     /**
-     * Maximum number of presences (if set).
+     * roles in the guild
      */
-    max_presences?: number | null;
+    roles: ICommon.IRole[];
 
     /**
-     * Maximum number of members.
+     * custom guild emojis
      */
-    max_members?: number;
+    emojis: IGuildEmoji[];
 
     /**
-     * Maximum number of users allowed in a video channel.
-     */
-    max_video_channel_users?: number;
-
-    /**
-     * The server's vanity invite code (if enabled).
-     */
-    vanity_url_code?: string | null;
-
-    /**
-     * The server's Nitro boost level.
+     * Enabled guild features.
      *
-     * - 0(NONE): guild has not unlocked any Server Boost perks
-     * - 1(TIER_1): guild has unlocked Server Boost level 1 perks
-     * - 2(TIER_2): guild has unlocked Server Boost level 2 perks
-     * - 3(TIER_3): guild has unlocked Server Boost level 3 perks
+     * This is an array of feature flags that indicate which special capabilities are enabled for the guild.
      *
-     * @link https://discord.com/developers/docs/resources/guild#guild-object-premium-tier
+     * - "ANIMATED_BANNER": guild has access to set an animated guild banner image
+     * - "ANIMATED_ICON": guild has access to set an animated guild icon
+     * - "APPLICATION_COMMAND_PERMISSIONS_V2": guild is using the old permissions configuration behavior
+     * - "AUTO_MODERATION": guild has set up auto moderation rules
+     * - "BANNER": guild has access to set a guild banner image
+     * - "COMMUNITY": guild can enable welcome screen, Membership Screening, stage channels and discovery, and receives community updates
+     * - "CREATOR_MONETIZABLE_PROVISIONAL": guild has enabled monetization
+     * - "CREATOR_STORE_PAGE": guild has enabled the role subscription promo page
+     * - "DEVELOPER_SUPPORT_SERVER": guild has been set as a support server on the App Directory
+     * - "DISCOVERABLE": guild is able to be discovered in the directory
+     * - "FEATURABLE": guild is able to be featured in the directory
+     * - "INVITES_DISABLED": guild has paused invites, preventing new users from joining
+     * - "INVITE_SPLASH": guild has access to set an invite splash background
+     * - "MEMBER_VERIFICATION_GATE_ENABLED": guild has enabled Membership Screening
+     * - "MORE_SOUNDBOARD": guild has increased custom soundboard sound slots
+     * - "MORE_STICKERS": guild has increased custom sticker slots
+     * - "NEWS": guild has access to create announcement channels
+     * - "PARTNERED": guild is partnered
+     * - "PREVIEW_ENABLED": guild can be previewed before joining via Membership Screening or the directory
+     * - "RAID_ALERTS_DISABLED": guild has disabled alerts for join raids in the configured safety alerts channel
+     * - "ROLE_ICONS": guild is able to set role icons
+     * - "ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE": guild has role subscriptions that can be purchased
+     * - "ROLE_SUBSCRIPTIONS_ENABLED": guild has enabled role subscriptions
+     * - "SOUNDBOARD": guild has created soundboard sounds
+     * - "TICKETED_EVENTS_ENABLED": guild has enabled ticketed events
+     * - "VANITY_URL": guild has access to set a vanity URL
+     * - "VERIFIED": guild is verified
+     * - "VIP_REGIONS": guild has access to set 384kbps bitrate in voice (previously VIP voice servers)
+     * - "WELCOME_SCREEN_ENABLED": guild has enabled the welcome screen
+     *
+     * @link https://discord.com/developers/docs/resources/guild#guild-object-mfa-level
      */
-    premium_tier: 0 | 1 | 2 | 3;
+    features: GuildFeature[];
 
     /**
-     * Number of users who boosted the guild.
+     * Multi-factor authentication level for the guild.
+     *
+     * - 0(NONE): guild has no MFA/2FA requirement for moderation actions
+     * - 1(ELEVATED): guild has a 2FA requirement for moderation actions
+     *
      */
-    premium_subscription_count?: number;
+    mfa_level: 0 | 1;
+
+    /**
+     * The application ID of the guild creator, if bot-created.
+     */
+    application_id: string | null;
+
+    /**
+     * 	the id of the channel where guild notices such as welcome messages and boost events are posted
+     */
+    system_channel_id: string | null;
 
     /**
      * System channel settings configured with bitwise flags.
@@ -209,14 +239,57 @@ export namespace IGuildService {
     system_channel_flags: number;
 
     /**
+     * the id of the channel where Community guilds can display rules and/or guidelines
+     */
+    rules_channel_id: string | null;
+
+    /**
+     * the maximum number of presences for the guild (null is always returned, apart from the largest of guilds)
+     */
+    max_presences?: number | null;
+
+    /**
+     * the maximum number of members for the guild
+     */
+    max_members?: number;
+
+    /**
+     * the vanity url code for the guild
+     */
+    vanity_url_code: string | null;
+
+    /**
+     * the description of a guild
+     */
+    description: string | null;
+
+    /**
+     * The guild's banner image hash.
+     * See: https://cdn.discordapp.com/banners/{guild_id}/{banner}.{format}?size={size}
+     */
+    banner: ICommon.IBanner["hash"] | null;
+
+    /**
+     * The server's Nitro boost level.
+     *
+     * - 0(NONE): guild has not unlocked any Server Boost perks
+     * - 1(TIER_1): guild has unlocked Server Boost level 1 perks
+     * - 2(TIER_2): guild has unlocked Server Boost level 2 perks
+     * - 3(TIER_3): guild has unlocked Server Boost level 3 perks
+     *
+     * @link https://discord.com/developers/docs/resources/guild#guild-object-premium-tier
+     */
+    premium_tier: 0 | 1 | 2 | 3;
+
+    /**
+     * Number of users who boosted the guild.
+     */
+    premium_subscription_count?: number;
+
+    /**
      * Preferred locale of the guild.
      */
     preferred_locale: string;
-
-    /**
-     * Channel ID of the rules channel.
-     */
-    rules_channel_id?: string | null;
 
     /**
      * Channel ID of the public updates channel.
@@ -224,9 +297,55 @@ export namespace IGuildService {
     public_updates_channel_id?: string | null;
 
     /**
-     * Channel ID of the safety alerts channel.
+     * Maximum number of users allowed in a video channel.
      */
-    safety_alerts_channel_id?: string | null;
+    max_video_channel_users?: number;
+
+    /**
+     * the maximum amount of users in a stage video channel
+     */
+    max_stage_video_channel_users?: number;
+
+    /**
+     * approximate number of members in this guild, returned from the `GET /guilds/<id>` and `/users/@me/guilds` endpoints when `with_counts` is true
+     */
+    approximate_member_count?: number;
+
+    /**
+     * 	approximate number of non-offline members in this guild, returned from the `GET /guilds/<id>` and `/users/@me/guilds` endpoints when with_counts is true
+     */
+    approximate_presence_count?: number;
+
+    welcome_screen?: null; // TODO
+
+    /**
+     * guild NSFW level
+     *
+     * 0: DEFAULT
+     * 1: EXPLICIT
+     * 2: SAFE
+     * 3:  AGE_RESTRICTED
+     *
+     * @link https://discord.com/developers/docs/resources/guild#guild-object-guild-nsfw-level
+     */
+    nsfw_level: 0 | 1 | 2 | 3;
+
+    stickers?: ""[]; // TODO
+
+    /**
+     * whether the guild has the boost progress bar enabled
+     */
+    premium_progress_bar_enabled: boolean;
+
+    /**
+     * the id of the channel where admins and moderators of Community guilds receive safety alerts from Discord
+     */
+    safety_alerts_channel_id: string | null;
+
+    /**
+     * the incidents data for this guild
+     */
+    incidents_data: null; // TODO
   }
 
   export interface IGuildEmoji {
@@ -314,10 +433,5 @@ export namespace IGuildService {
      * - Only visible in the server's audit log if the bot has sufficient permissions.
      */
     auditLogReason?: string;
-
-    /**
-     * whether the guild's boost progress bar should be enabled
-     */
-    premium_progress_bar_enabled?: boolean;
   }
 }
