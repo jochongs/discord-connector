@@ -1,5 +1,6 @@
 import { Axios } from "axios";
 import { IGuildService } from "./structure/IGuildService";
+import typia from "typia";
 
 /**
  * Guilds in Discord represent an isolated collection of users and channels,
@@ -11,6 +12,7 @@ export class GuildService {
   constructor(
     private readonly axios: Axios,
     private readonly BOT_TOKEN: string,
+    private readonly GUILD_ID: string,
   ) {}
 
   /**
@@ -23,8 +25,8 @@ export class GuildService {
   public async getGuildById(
     input: IGuildService.IGetGuildInput,
   ): Promise<IGuildService.IGuild> {
-    const { guild_id, with_counts = false } = input;
-    const url = `https://discord.com/api/v10/guilds/${guild_id}`;
+    const { with_counts = false } = input;
+    const url = `https://discord.com/api/v10/guilds/${this.GUILD_ID}`;
     const response = await this.axios.get(url, {
       headers: {
         Authorization: `Bot ${this.BOT_TOKEN}`,
@@ -33,6 +35,10 @@ export class GuildService {
         with_counts,
       },
     });
+
+    const result = typia.validate<IGuildService.IGuild>(response.data);
+    console.log(result);
+
     return response.data;
   }
 }

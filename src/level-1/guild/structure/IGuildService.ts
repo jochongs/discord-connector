@@ -31,13 +31,13 @@ export namespace IGuildService {
      * The guild's splash image hash.
      * See: https://cdn.discordapp.com/splashes/{guild_id}/{splash}.{format}?size={size}
      */
-    splash?: ICommon.ISplash["hash"];
+    splash?: ICommon.ISplash["hash"] | null;
 
     /**
      * The discovery splash image hash used on discovery pages.
      * See: https://cdn.discordapp.com/discovery-splashes/{guild_id}/{discovery_splash}.{format}?size={size}
      */
-    discovery_splash?: ICommon.ISplash["hash"];
+    discovery_splash?: ICommon.ISplash["hash"] | null;
 
     /**
      * Approximate number of members in the guild (when with_counts is true).
@@ -63,7 +63,7 @@ export namespace IGuildService {
      * The guild's banner image hash.
      * See: https://cdn.discordapp.com/banners/{guild_id}/{banner}.{format}?size={size}
      */
-    banner?: ICommon.IBanner["hash"];
+    banner?: ICommon.IBanner["hash"] | null;
 
     /**
      * The user ID of the guild owner.
@@ -225,11 +225,6 @@ export namespace IGuildService {
   }
 
   export interface IGetGuildInput {
-    /**
-     * guild id
-     */
-    guild_id: IGuild["id"];
-
     /**
      * when true, will return approximate member and presence counts for the guild
      *

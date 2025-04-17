@@ -1,17 +1,22 @@
 {
-  "name": "discord-connector",  
+  "name": "discord-connector",
   "author": "jochongs",
   "scripts": {
-    "start" : "tsx",
+    "dev": "nodemon --watch src --ext ts --exec ts-node src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js",
     "prepare": "ts-patch install"
   },
   "devDependencies": {
     "@types/node": "^22.14.1",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
     "ts-patch": "^3.3.0",
     "typescript": "~5.8.3"
   },
   "dependencies": {
     "axios": "^1.8.4",
+    "dotenv": "^16.5.0",
     "typia": "^9.1.1"
-  }  
+  }
 }
